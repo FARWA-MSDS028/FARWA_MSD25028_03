@@ -215,3 +215,58 @@ if __name__ == "__main__":
             show_retrieval(i, embeddings, images, labels, name)
 
     print("\n🎉 ALL VISUALIZATIONS COMPLETED!")
+
+
+
+
+print("\n📊 COMPUTING RECALL SCORES...\n")
+
+def recall_at_k(embeddings, labels, k=1):
+    correct = 0
+    total = len(embeddings)
+
+    distances = torch.cdist(embeddings, embeddings)
+
+    for i in range(total):
+
+        dist = distances[i]
+        dist[i] = float('inf')
+
+        nearest = torch.argsort(dist)[:k]
+
+        if labels[i] in labels[nearest]:
+            correct += 1
+
+    return correct / total
+
+
+for name, model_path in models.items():
+
+    print(f"\nEvaluating {name} model...")
+
+    model = EmbeddingNet().to(device)
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.eval()
+
+    embeddings = []
+    labels = []
+
+    with torch.no_grad():
+        for images, target in loader:
+
+            images = images.to(device)
+
+            output = model(images)
+
+            embeddings.append(output.cpu())
+            labels.append(target)
+
+    embeddings = torch.cat(embeddings)
+    labels = torch.cat(labels)
+
+    r1 = recall_at_k(embeddings, labels, k=1)
+    r5 = recall_at_k(embeddings, labels, k=5)
+
+    print(f"{name}")
+    print(f"Recall@1: {r1:.4f}")
+    print(f"Recall@5: {r5:.4f}")
