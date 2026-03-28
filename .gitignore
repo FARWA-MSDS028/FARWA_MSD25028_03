@@ -6,6 +6,8 @@ weights/
 graphs/
 visualize_all 3 experiments.py/
 visualize_experiments.py/
+dataset.py/
+
 
 # Python cache
 __pycache__/

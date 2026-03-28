@@ -1,6 +1,7 @@
 import torch
 import os
-
+import matplotlib.pyplot as plt
+import os
 from torch.utils.data import DataLoader, Subset
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
@@ -34,7 +35,7 @@ transform = transforms.Compose([
 # ------------------------------
 dataset = ImageFolder("dataset/train", transform=transform)
 
-# 🔥 SUBSET
+# SUBSET
 dataset = Subset(dataset, range(1000))
 
 
@@ -56,12 +57,16 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 # ------------------------------
 # TRAINING
 # ------------------------------
-for epoch in range(3):
+# TRAIN
+# ------------------------------
+losses = []
+os.makedirs("graphs", exist_ok=True)
+
+for epoch in range(5):
+
+    total_loss = 0   #  IMPORTANT
 
     for images, labels in loader:
-
-        images = images.to(device)
-        labels = labels.to(device)
 
         embeddings = model(images)
 
@@ -71,7 +76,19 @@ for epoch in range(3):
         loss.backward()
         optimizer.step()
 
-    print("epoch:", epoch, "loss:", loss.item())
+        total_loss += loss.item()
+
+    epoch_loss = total_loss / len(loader)
+    losses.append(epoch_loss)
+
+    print("epoch:", epoch, "loss:", epoch_loss)
+
+plt.plot(losses, marker='o')
+plt.title("Triplet Hard Loss Curve")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.savefig("graphs/loss_triplet_hard.png")
+plt.close()
 
 
 # ------------------------------

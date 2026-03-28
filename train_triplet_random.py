@@ -1,6 +1,6 @@
 import torch
 import os
-
+import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, Subset
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
@@ -38,7 +38,7 @@ dataset = ImageFolder("dataset/train", transform=transform)
 
 triplet_dataset = TripletDataset(dataset)
 
-# 🔥 SUBSET
+#  SUBSET
 triplet_dataset = Subset(triplet_dataset, range(1000))
 
 
@@ -62,13 +62,14 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 # ------------------------------
 # TRAINING
 # ------------------------------
-for epoch in range(3):
+losses = []
+os.makedirs("graphs", exist_ok=True)
+
+for epoch in range(5):
+
+    total_loss = 0  
 
     for anchor, positive, negative in loader:
-
-        anchor = anchor.to(device)
-        positive = positive.to(device)
-        negative = negative.to(device)
 
         emb_a = model(anchor)
         emb_p = model(positive)
@@ -80,7 +81,19 @@ for epoch in range(3):
         loss.backward()
         optimizer.step()
 
-    print("epoch:", epoch, "loss:", loss.item())
+        total_loss += loss.item()
+
+    epoch_loss = total_loss / len(loader)
+    losses.append(epoch_loss)
+
+    print("epoch:", epoch, "loss:", epoch_loss)
+
+plt.plot(losses, marker='o')
+plt.title("Triplet Random Loss Curve")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.savefig("graphs/loss_triplet_random.png")
+plt.close()
 
 
 # ------------------------------

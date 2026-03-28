@@ -1,6 +1,6 @@
 import torch
 import os
-
+import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, Subset
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
@@ -61,25 +61,64 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 # ------------------------------
 # TRAINING
 # ------------------------------
+# for epoch in range(3):
+
+#     for img1, img2, label in loader:
+
+#         img1 = img1.to(device)
+#         img2 = img2.to(device)
+#         label = label.float().to(device)
+
+#         emb1 = model(img1)
+#         emb2 = model(img2)
+
+#         loss = criterion(emb1, emb2, label)
+
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
+#         losses = []
+#     os.makedirs("graphs", exist_ok=True)
+
+#     epoch_loss = loss.item()
+# losses.append(epoch_loss)
+
+# print("epoch:", epoch, "loss:", epoch_loss)
+losses = []
+os.makedirs("graphs", exist_ok=True)
+
 for epoch in range(3):
 
-    for img1, img2, label in loader:
+    total_loss = 0   # 🔥 reset every epoch
 
-        img1 = img1.to(device)
-        img2 = img2.to(device)
-        label = label.float().to(device)
+    for img1, img2, label in loader:
 
         emb1 = model(img1)
         emb2 = model(img2)
 
-        loss = criterion(emb1, emb2, label)
+        loss = criterion(emb1, emb2, label.float())
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-    print("epoch:", epoch, "loss:", loss.item())
+        total_loss += loss.item()   # 🔥 accumulate
 
+    # 🔥 average loss of epoch
+    epoch_loss = total_loss / len(loader)
+
+    losses.append(epoch_loss)
+
+    print("epoch:", epoch, "loss:", epoch_loss)
+
+
+
+plt.plot(losses)
+plt.title("Contrastive Loss Curve")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.savefig("graphs/loss_contrastive.png")
+plt.close()
 
 # ------------------------------
 # SAVE
