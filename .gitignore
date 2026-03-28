@@ -1,6 +1,6 @@
 # Large model files - Google Drive upload 
 weights/*.pth
-
+weights/
 # Dataset - 
 dataset/
 data/
@@ -21,3 +21,4 @@ Thumbs.db
 
 # R history
 .Rhistory
+
