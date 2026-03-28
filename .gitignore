@@ -1,17 +1,12 @@
-# Python
+# Ignore heavy folders
+dataset/
+data/
+embeddings/
+weights/
+graphs/
+visualize_all 3 experiments.py/
+visualize_experiments.py/
+
+# Python cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-*.npy
-*.pth
-weights/
-embeddings/
-graphs/
-.vscode/
-.idea/
-*.log
-dataset/
