@@ -1,14 +1,23 @@
-# Ignore heavy folders
+# Large model files - Google Drive upload 
+weights/*.pth
+
+# Dataset - 
 dataset/
 data/
-embeddings/
-weights/
-graphs/
-visualize_all 3 experiments.py/
-visualize_experiments.py/
-dataset.py/
+caltech101/
 
-
+# Embeddings - regenerate
+embeddings
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+.venv/
+venv/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# R history
+.Rhistory
